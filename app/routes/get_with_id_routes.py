@@ -16,19 +16,22 @@ def select_by_id(id):
    cur.execute(
     """
     SELECT * FROM ka_series
-    WHERE id = %s
-    """, str(id)
+    WHERE id = (%s);
+    """, (id, )
    )
 
-   data = cur.fetchall()
-
-   if data != []:
-        FIELDNAMES = ['id', 'serie', 'seasons', 'released_date', 'genre', 'imdb_rating']
-        data_factory = [dict(zip(FIELDNAMES, row)) for row in data]
-    
-        return {'Data': data_factory}, HTTPStatus.CREATED
-   else:
-        return {'msg': 'Não encontrado'}, HTTPStatus.NOT_FOUND
+   data = cur.fetchone()
+   
    conn.commit()
    cur.close()
    conn.close()
+
+   try:
+        FIELDNAMES = ['id', 'serie', 'seasons', 'released_date', 'genre', 'imdb_rating']
+
+        data_factory = dict(zip(FIELDNAMES, data))
+        
+        return {'Data': data_factory}, HTTPStatus.CREATED
+   except:
+        return {'msg': {}}, HTTPStatus.NOT_FOUND
+   

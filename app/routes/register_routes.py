@@ -25,7 +25,7 @@ def create():
     );
     """
    )
-   serie = (data["serie"].title(),data["seasons"],data["released_date"],data["genre"],data["imdb_rating"])
+   serie = (data["serie"].title(),data["seasons"],data["released_date"],data["genre"].title(),data["imdb_rating"])
    query = ('INSERT INTO ka_series (serie, seasons, released_date, genre, imdb_rating) VALUES (%s, %s, %s, %s, %s)')
    cur.execute(query, serie)
 
@@ -33,4 +33,4 @@ def create():
    cur.close()
    conn.close()
 
-   return {'Data': data}, HTTPStatus.CREATED
+   return {'Data': data}, HTTPStatus.OK

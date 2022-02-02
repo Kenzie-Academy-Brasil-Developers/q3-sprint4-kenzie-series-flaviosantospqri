@@ -12,18 +12,35 @@ def series():
    
    
    cur = conn.cursor()
+   
+   cur.execute(
+    """
+    CREATE TABLE IF NOT EXISTS ka_series(
+        id BIGSERIAL PRIMARY KEY,
+        serie VARCHAR(100),
+        seasons INTEGER NOT NULL,
+        released_date DATE NOT NULL,
+        genre VARCHAR(50) NOT NULL,
+        imdb_rating FLOAT NOT NULL
+    );
+    """
+   )
 
    cur.execute(
     """
     SELECT * FROM ka_series
     """
    )
-   data = cur.fetchall()
-   FIELDNAMES = ['id', 'serie', 'seasons', 'released_date', 'genre', 'imdb_rating']
-   data_factory = [dict(zip(FIELDNAMES, row)) for row in data]
+   try:
+      data = cur.fetchall()
+      
+      conn.commit()
+      cur.close()
+      conn.close()
 
-   conn.commit()
-   cur.close()
-   conn.close()
+      FIELDNAMES = ['id', 'serie', 'seasons', 'released_date', 'genre', 'imdb_rating']
+      data_factory = [dict(zip(FIELDNAMES, row)) for row in data]
 
-   return {'Data': data_factory}, HTTPStatus.CREATED
+      return {'Data': data_factory}, HTTPStatus.OK
+   except:
+      return {'Data': data}, HTTPStatus.OK
